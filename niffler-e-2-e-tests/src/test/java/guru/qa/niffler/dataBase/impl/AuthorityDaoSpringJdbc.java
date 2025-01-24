@@ -1,7 +1,9 @@
 package guru.qa.niffler.dataBase.impl;
 
+import guru.qa.niffler.config.Config;
 import guru.qa.niffler.dataBase.dao.AuthorityDao;
 import guru.qa.niffler.dataBase.entity.AuthorityEntity;
+import guru.qa.niffler.dataBase.tpl.DataSources;
 import guru.qa.niffler.mapper.AuthorityEntityRowMapper;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -13,15 +15,12 @@ import java.util.List;
 
 public class AuthorityDaoSpringJdbc implements AuthorityDao {
 
-    private final DataSource dataSource;
+    private static final Config CFG = Config.getInstance();
 
-    public AuthorityDaoSpringJdbc(DataSource dataSource) {
-        this.dataSource = dataSource;
-    }
 
     @Override
     public AuthorityEntity createUser(AuthorityEntity authority) {
-        JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(CFG.authJDBCUrl()));
         jdbcTemplate.batchUpdate(
                 "INSERT INTO authority (user_id, authority) VALUES (?,?)",
                 new BatchPreparedStatementSetter() {
@@ -42,7 +41,7 @@ public class AuthorityDaoSpringJdbc implements AuthorityDao {
 
     @Override
     public List<AuthorityEntity> findAll() {
-        JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(CFG.authJDBCUrl()));
         return jdbcTemplate.query(
                 "SELECT * FROM authority",
                 AuthorityEntityRowMapper.instance

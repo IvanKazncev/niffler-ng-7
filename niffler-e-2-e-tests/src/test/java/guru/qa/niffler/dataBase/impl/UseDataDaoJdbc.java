@@ -3,7 +3,6 @@ package guru.qa.niffler.dataBase.impl;
 import guru.qa.niffler.config.Config;
 import guru.qa.niffler.dataBase.dao.UseDataDao;
 import guru.qa.niffler.dataBase.dbConnection.DataBases;
-import guru.qa.niffler.dataBase.entity.AuthUserEntity;
 import guru.qa.niffler.dataBase.entity.UserEntity;
 import guru.qa.niffler.model.CurrencyValues;
 
@@ -13,19 +12,17 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static guru.qa.niffler.dataBase.tpl.Connections.holder;
+
 
 public class UseDataDaoJdbc implements UseDataDao {
 
     private static final Config CFG = Config.getInstance();
-    private final Connection connection;
 
-    public UseDataDaoJdbc(Connection connection) {
-        this.connection = connection;
-    }
 
     @Override
     public UserEntity createUser(UserEntity user) {
-            try (PreparedStatement ps = connection.prepareStatement(
+            try (PreparedStatement ps = holder(CFG.userdataJDBCUrl()).connection().prepareStatement(
                     "INSERT INTO \"user\" (username, currency, firstname, surname, photo, photo_small, full_name) " +
                             "VALUES (?, ?, ?, ?, ?, ?, ?)",
                     Statement.RETURN_GENERATED_KEYS
@@ -58,7 +55,7 @@ public class UseDataDaoJdbc implements UseDataDao {
 
     @Override
     public Optional<UserEntity> findById(UUID id) {
-            try (PreparedStatement ps = connection.prepareStatement(
+            try (PreparedStatement ps = holder(CFG.userdataJDBCUrl()).connection().prepareStatement(
                     "SELECT * FROM \"user\" WHERE id = ?"
             )) {
                 ps.setObject(1, id);
@@ -87,7 +84,7 @@ public class UseDataDaoJdbc implements UseDataDao {
 
     @Override
     public Optional<UserEntity> findByUsername(String username) {
-            try (PreparedStatement ps = connection.prepareStatement(
+            try (PreparedStatement ps = holder(CFG.userdataJDBCUrl()).connection().prepareStatement(
                     "SELECT * FROM \"user\" WHERE username = ?"
             )) {
                 ps.setObject(1, username);

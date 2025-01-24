@@ -311,12 +311,12 @@ public class WebTest {
 
     @Test
     @DisplayName("Неуспешное добавление данных в БД таблица niffler-auth и niffler-userdata")
-    void notAccurateExTransaction(){
+    void notAccurateExTransaction() throws Exception {
         UserDbClient userDbClient = new UserDbClient();
         var userName = RandomDataUtils.getUserName();
         System.out.println(userName);
         PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
-        System.out.println(userDbClient.createUser(
+        System.out.println(userDbClient.createUserSpringJdbc(
                 new AuthUserJson(
                         UUID.randomUUID(),
                         null,
@@ -336,5 +336,33 @@ public class WebTest {
                         null,
                         null)));
 
+    }
+    @Test
+    @DisplayName("Проверка отмены транзакции при ошибке ")
+    void exTransactionChained() throws Exception {
+        UserDbClient userDbClient = new UserDbClient();
+        var userName = RandomDataUtils.getUserName();
+        System.out.println(userName);
+        PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+        System.out.println(userDbClient.createUserSpringJdbcChained(
+                new AuthUserJson(
+                        UUID.randomUUID(),
+                        userName,
+                        passwordEncoder.encode("123"),
+                        true,
+                        true,
+                        true,
+                        true,
+                        new ArrayList<>()),
+                new UserJson(
+                        UUID.randomUUID(),
+                        null,
+                        RandomDataUtils.getName(),
+                        RandomDataUtils.getSurname(),
+                        "Ivankov1234",
+                        CurrencyValues.USD,
+                        null,
+                        null)));
+        //Транзакция не откатывается
     }
 }
