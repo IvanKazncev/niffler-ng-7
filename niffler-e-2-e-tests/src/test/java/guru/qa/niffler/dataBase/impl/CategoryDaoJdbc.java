@@ -26,7 +26,7 @@ public class CategoryDaoJdbc implements CategoryDao {
         )) {
             ps.setString(1, category.getUsername());
             ps.setString(2, category.getName());
-            ps.setBoolean(3, category.getArchived());
+            ps.setBoolean(3, category.isArchived());
 
             ps.executeUpdate();
 

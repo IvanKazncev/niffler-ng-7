@@ -34,7 +34,7 @@ public record SpendingJson(
                         category.getId(),
                         category.getName(),
                         username,
-                        category.getArchived()
+                        category.isArchived()
                 ),
                 entity.getCurrency(),
                 entity.getAmount(),

@@ -1,4 +1,4 @@
-package guru.qa.niffler.mapper;
+package guru.qa.niffler.dataBase.mapper;
 
 import guru.qa.niffler.dataBase.entity.AuthUserEntity;
 import guru.qa.niffler.dataBase.entity.Authority;
