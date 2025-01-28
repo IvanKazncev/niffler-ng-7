@@ -1,7 +1,9 @@
 package guru.qa.niffler.dataBase.impl;
 
+import guru.qa.niffler.config.Config;
 import guru.qa.niffler.dataBase.dao.AuthUserDao;
 import guru.qa.niffler.dataBase.entity.AuthUserEntity;
+import guru.qa.niffler.dataBase.tpl.DataSources;
 import guru.qa.niffler.mapper.AuthUserEntityRowMapper;
 import guru.qa.niffler.mapper.AuthorityEntityRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -17,15 +19,11 @@ import java.util.UUID;
 
 public class AuthUserDaoSpringJdbc implements AuthUserDao {
 
-    private final DataSource dataSource;
-
-    public AuthUserDaoSpringJdbc(DataSource dataSource) {
-        this.dataSource = dataSource;
-    }
+    private static final Config CFG = Config.getInstance();
 
     @Override
     public AuthUserEntity createUser(AuthUserEntity authUser) {
-        JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(CFG.authJDBCUrl()));
         KeyHolder kh = new GeneratedKeyHolder();
         jdbcTemplate.update(con -> {
             PreparedStatement ps = con.prepareStatement(
@@ -49,7 +47,7 @@ public class AuthUserDaoSpringJdbc implements AuthUserDao {
 
     @Override
     public Optional<AuthUserEntity> findById(UUID id) {
-        JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(CFG.authJDBCUrl()));
         return Optional.ofNullable(
                 jdbcTemplate.queryForObject(
                         "SELECT * FROM \"user\" WHERE id = ?",
@@ -61,7 +59,7 @@ public class AuthUserDaoSpringJdbc implements AuthUserDao {
 
     @Override
     public List<AuthUserEntity> findAll() {
-        JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(CFG.authJDBCUrl()));
         return jdbcTemplate.query(
                 "SELECT * FROM \"user\"",
                 AuthUserEntityRowMapper.instance

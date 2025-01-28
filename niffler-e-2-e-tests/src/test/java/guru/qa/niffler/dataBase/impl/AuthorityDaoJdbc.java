@@ -5,26 +5,27 @@ import guru.qa.niffler.dataBase.dao.AuthorityDao;
 import guru.qa.niffler.dataBase.dbConnection.DataBases;
 import guru.qa.niffler.dataBase.entity.Authority;
 import guru.qa.niffler.dataBase.entity.AuthorityEntity;
+import guru.qa.niffler.dataBase.tpl.JdbcConnectionHolder;
+import guru.qa.niffler.dataBase.tpl.JdbcConnectionHolders;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static guru.qa.niffler.dataBase.tpl.Connections.holder;
+
 public class AuthorityDaoJdbc implements AuthorityDao {
 
     private static final Config CFG = Config.getInstance();
 
 
-    private final Connection connection;
 
-    public AuthorityDaoJdbc(Connection connection) {
-        this.connection = connection;
-    }
+
 
     @Override
     public AuthorityEntity createUser(AuthorityEntity authority) {
-        try (PreparedStatement ps = connection.prepareStatement(
+        try (PreparedStatement ps =  holder(CFG.authJDBCUrl()).connection().prepareStatement(
                 "INSERT INTO \"authority\" (authority, user_id) " +
                         "VALUES (?, ?)",
                 Statement.RETURN_GENERATED_KEYS

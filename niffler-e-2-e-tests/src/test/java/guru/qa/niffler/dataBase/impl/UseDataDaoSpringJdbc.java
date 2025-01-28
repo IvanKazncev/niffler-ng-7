@@ -1,7 +1,9 @@
 package guru.qa.niffler.dataBase.impl;
 
+import guru.qa.niffler.config.Config;
 import guru.qa.niffler.dataBase.dao.UseDataDao;
 import guru.qa.niffler.dataBase.entity.UserEntity;
+import guru.qa.niffler.dataBase.tpl.DataSources;
 import guru.qa.niffler.mapper.AuthUserEntityRowMapper;
 import guru.qa.niffler.mapper.UserEntityRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -17,14 +19,11 @@ import java.util.UUID;
 
 public class UseDataDaoSpringJdbc implements UseDataDao {
 
-    private final DataSource dataSource;
-    public UseDataDaoSpringJdbc(DataSource dataSource) {
-        this.dataSource = dataSource;
-    }
+    private static final Config CFG = Config.getInstance();
 
     @Override
     public UserEntity createUser(UserEntity user) {
-        JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(CFG.userdataJDBCUrl()));
         KeyHolder kh = new GeneratedKeyHolder();
         jdbcTemplate.update(con -> {
             PreparedStatement ps = con.prepareStatement(
@@ -49,7 +48,7 @@ public class UseDataDaoSpringJdbc implements UseDataDao {
 
     @Override
     public Optional<UserEntity> findById(UUID id) {
-        JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(CFG.userdataJDBCUrl()));
         return Optional.ofNullable(
                 jdbcTemplate.queryForObject(
                         "SELECT * FROM \"user\" WHERE id = ?",
@@ -71,7 +70,7 @@ public class UseDataDaoSpringJdbc implements UseDataDao {
 
     @Override
     public List<UserEntity> findAll() {
-        JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(CFG.userdataJDBCUrl()));
         return jdbcTemplate.query(
                 "SELECT * FROM \"user\"",
                 UserEntityRowMapper.instance
