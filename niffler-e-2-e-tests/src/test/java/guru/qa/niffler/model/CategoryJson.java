@@ -24,7 +24,7 @@ public record CategoryJson(
                 entity.getId(),
                 entity.getName(),
                 entity.getUsername(),
-                entity.getArchived()
+                entity.isArchived()
         );
     }
 }

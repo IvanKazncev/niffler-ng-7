@@ -1,4 +1,4 @@
-package guru.qa.niffler.mapper;
+package guru.qa.niffler.dataBase.mapper;
 
 import guru.qa.niffler.dataBase.entity.*;
 import guru.qa.niffler.model.CurrencyValues;
@@ -24,7 +24,7 @@ public class SpendEntityRowMapper implements RowMapper<SpendEntity> {
         se.setId(rs.getObject("id", UUID.class));
         se.setUsername(rs.getString("username"));
         se.setCurrency(CurrencyValues.valueOf(rs.getString("currency")));
-        se.setSpendDate(rs.getDate("spend_date"));
+        se.setSpendDate(new java.sql.Date(rs.getDate("spend_date").getTime()));
         se.setAmount(rs.getDouble("amount"));
         se.setDescription(rs.getString("description"));
         se.setCategory(ce);

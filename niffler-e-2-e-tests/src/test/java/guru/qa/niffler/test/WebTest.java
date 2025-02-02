@@ -1,9 +1,7 @@
 package guru.qa.niffler.test;
 
 import guru.qa.niffler.data.*;
-import guru.qa.niffler.dataBase.entity.AuthUserEntity;
-import guru.qa.niffler.dataBase.entity.Authority;
-import guru.qa.niffler.dataBase.entity.AuthorityEntity;
+import guru.qa.niffler.dataBase.repository.impl.*;
 import guru.qa.niffler.dataBase.service.UserDbClient;
 import guru.qa.niffler.helpers.dataGeneration.NewAccountDataGeneration;
 import guru.qa.niffler.helpers.dataGeneration.RandomDataUtils;
@@ -19,6 +17,7 @@ import io.qameta.allure.Owner;
 import io.qameta.allure.Severity;
 import io.qameta.allure.SeverityLevel;
 import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,8 +27,6 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.UUID;
 
 @ExtendWith(BrowserExtension.class)
@@ -279,7 +276,7 @@ public class WebTest {
 
     @Test
     @DisplayName("Успешное добавление данных в БД таблица niffler-auth и niffler-userdata")
-    void successesExTransaction(){
+    void successesExTransaction() {
         UserDbClient userDbClient = new UserDbClient();
         var userName = RandomDataUtils.getUserName();
         var userID = UUID.randomUUID();
@@ -295,8 +292,8 @@ public class WebTest {
                         true,
                         true,
                         new ArrayList<>()
-                        ),
-               new UserJson(
+                ),
+                new UserJson(
                         UUID.randomUUID(),
                         userName,
                         RandomDataUtils.getName(),
@@ -315,28 +312,19 @@ public class WebTest {
         UserDbClient userDbClient = new UserDbClient();
         var userName = RandomDataUtils.getUserName();
         System.out.println(userName);
-        PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
         System.out.println(userDbClient.createUserSpringJdbc(
-                new AuthUserJson(
-                        UUID.randomUUID(),
-                        null,
-                        passwordEncoder.encode("123"),
-                        true,
-                        true,
-                        true,
-                        true,
-                        new ArrayList<>()),
                 new UserJson(
                         UUID.randomUUID(),
                         userName,
                         RandomDataUtils.getName(),
                         RandomDataUtils.getSurname(),
-                        "Ivankov123",
+                        "Ivankov123777",
                         CurrencyValues.USD,
                         null,
                         null)));
 
     }
+
     @Test
     @DisplayName("Проверка отмены транзакции при ошибке ")
     void exTransactionChained() throws Exception {
@@ -364,5 +352,126 @@ public class WebTest {
                         null,
                         null)));
         //Транзакция не откатывается
+    }
+
+    @Test
+    @DisplayName("Проверка Join spring+repository по ID")
+    void springRepositoryCheck() throws Exception {
+        AuthUserRepositorySpringJdbc authUserRepository = new AuthUserRepositorySpringJdbc();
+        var response = authUserRepository.findById(UUID.fromString("65a7ed65-fddf-493e-b8a6-5045e17f91e7"));
+        System.out.println(response.get().getPassword());
+        System.out.println(response.get().getAuthorities());
+    }
+
+    @Test
+    @DisplayName("Проверка Join spting+repository All")
+    void springRepositoryCheckAll() throws Exception {
+        AuthUserRepositorySpringJdbc authUserRepository = new AuthUserRepositorySpringJdbc();
+        var response = authUserRepository.findAll();
+        for (int i = 0; i < response.size(); i++) {
+            System.out.println(response.get(i).getPassword());
+        }
+    }
+
+    @Test
+    @DisplayName("Проверка подучение spend по ID")
+    void spendByIdCheck() throws Exception {
+        SpendRepositoryJdbc spendRepository = new SpendRepositoryJdbc();
+        var response = spendRepository.findSpendById(UUID.fromString("45b7b612-ccf9-11ef-bc29-0242ac110004"));
+        System.out.println(response.get().getSpendDate());
+    }
+
+    @Test
+    @DisplayName("Проверка проверка получения spend по userName")
+    void spendByUserNameCheck() throws Exception {
+        SpendRepositoryJdbc spendRepository = new SpendRepositoryJdbc();
+        var response = spendRepository.findAllByUsername("ivan");
+        for (int i = 0; i < response.size(); i++) {
+            System.out.println(response.get(i).getCategory().getId());
+        }
+    }
+    @Test
+    @DisplayName("Проверка поиска spend ALL")
+    void spendAllCheck() throws Exception {
+        SpendRepositoryJdbc spendRepository = new SpendRepositoryJdbc();
+        var response =  spendRepository.findAll();
+        for (int i = 0; i < response.size(); i++) {
+            System.out.println(response.get(i).getCategory().getId());
+        }
+    }
+
+    @Test
+    @DisplayName("Проверка поска spendById spring+repository")
+    void spendByIdCheckById() throws Exception {
+        SpendRepositorySpringJdbc spendRepository = new SpendRepositorySpringJdbc();
+        var response = spendRepository.findSpendById(UUID.fromString("45b7b612-ccf9-11ef-bc29-0242ac110004"));
+        System.out.println(response.get().getSpendDate());
+    }
+
+    @Test
+    @DisplayName("Проверка поиска spendByUserName spring+repository")
+    void spendByUserNameCheckRepository() throws Exception {
+        SpendRepositorySpringJdbc spendRepository = new SpendRepositorySpringJdbc();
+        var response = spendRepository.findAllByUsername("ivan");
+        for (int i = 0; i < response.size(); i++) {
+            System.out.println(response.get(i).getCategory().getId());
+        }
+    }
+
+    @Test
+    @DisplayName("Проверка поиска spendAll spring+repository")
+    void spendAllCheckAll() throws Exception {
+        SpendRepositorySpringJdbc spendRepository = new SpendRepositorySpringJdbc();
+        var response = spendRepository.findAll();
+        for (int i = 0; i < response.size(); i++) {
+            System.out.println(response.get(i).getCategory().getId());
+        }
+    }
+
+    @Test
+    @DisplayName("Получение пользователя из userData repository по id")
+    void userDataCheck() throws Exception {
+        UseDataRepositoryJdbc useDataRepositoryJdbc = new UseDataRepositoryJdbc();
+        var response = useDataRepositoryJdbc.findById(UUID.fromString("1977bfe4-d195-4c0b-a8d4-b8d310af2815"));
+        System.out.println(response.get().getFriendshipAddressees().get(0).getAddressee().getId());
+    }
+
+    @Test
+    @DisplayName("Получение пльзователя из userData repository по userName")
+    void userDataCheckUserName() throws Exception {
+        UseDataRepositoryJdbc useDataRepositoryJdbc = new UseDataRepositoryJdbc();
+        var response = useDataRepositoryJdbc.findByUsername("ivanWithFriend");
+        System.out.println(response.get().getFriendshipAddressees().get(0).getAddressee().getId());
+    }
+
+    @Test
+    @DisplayName("Получение всех пользователей из useData repository")
+    void useDataCheckUseDataRepository() throws Exception {
+        UseDataRepositoryJdbc useDataRepositoryJdbc = new UseDataRepositoryJdbc();
+        var response = useDataRepositoryJdbc.findAll();
+        for (int i = 0; i < response.size(); i++) {
+            System.out.println(response.get(i).getFriendshipAddressees().get(0).getAddressee().getId());
+        }
+        for (int i = 0; i < response.size(); i++) {
+            System.out.println(response.get(i).getFriendshipRequests().get(0).getAddressee().getId());
+        }
+    }
+
+    @Test
+    @DisplayName("Получение пользователей из userData spring+repository по id")
+    void userDataCheckUserDataRepository() throws Exception {
+        UseDataRepositorySpringJdbc useDataRepositorySpringJdbc = new UseDataRepositorySpringJdbc();
+        var response = useDataRepositorySpringJdbc.findById(UUID.fromString("1977bfe4-d195-4c0b-a8d4-b8d310af2815"));
+        System.out.println(response.get().getFriendshipAddressees().get(0).getRequester().getId());
+    }
+
+    @Test
+    @DisplayName("Получение всех пользователей из useData spring+repository")
+    void useDataCheckUseDataRepositoryUseDataRepository() throws Exception {
+        UseDataRepositorySpringJdbc useDataRepositorySpringJdbc = new UseDataRepositorySpringJdbc();
+        var response = useDataRepositorySpringJdbc.findAll();
+        for (int i = 0; i < response.size(); i++) {
+            System.out.println(response.get(i).getFriendshipRequests().get(0).getRequester().getId());
+        }
     }
 }

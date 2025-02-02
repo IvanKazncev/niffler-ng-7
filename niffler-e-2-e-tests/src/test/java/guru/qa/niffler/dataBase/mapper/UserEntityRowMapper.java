@@ -1,12 +1,13 @@
-package guru.qa.niffler.mapper;
+package guru.qa.niffler.dataBase.mapper;
 
-import guru.qa.niffler.dataBase.entity.AuthUserEntity;
 import guru.qa.niffler.dataBase.entity.UserEntity;
 import guru.qa.niffler.model.CurrencyValues;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class UserEntityRowMapper implements RowMapper<UserEntity> {

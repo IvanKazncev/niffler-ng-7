@@ -4,14 +4,12 @@ import guru.qa.niffler.config.Config;
 import guru.qa.niffler.dataBase.dao.CategoryDao;
 import guru.qa.niffler.dataBase.entity.CategoryEntity;
 import guru.qa.niffler.dataBase.tpl.DataSources;
-import guru.qa.niffler.mapper.AuthUserEntityRowMapper;
-import guru.qa.niffler.mapper.CategoryEntityRowMapper;
+import guru.qa.niffler.dataBase.mapper.CategoryEntityRowMapper;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
-import javax.sql.DataSource;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -35,7 +33,7 @@ public class CategoryDaoSpringJdbc implements CategoryDao {
             );
             ps.setString(1, category.getUsername());
             ps.setString(2, category.getName());
-            ps.setBoolean(3,category.getArchived());
+            ps.setBoolean(3,category.isArchived());
             return ps;
         },kh);
 

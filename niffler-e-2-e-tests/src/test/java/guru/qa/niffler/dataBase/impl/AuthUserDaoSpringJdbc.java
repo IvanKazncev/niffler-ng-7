@@ -4,13 +4,11 @@ import guru.qa.niffler.config.Config;
 import guru.qa.niffler.dataBase.dao.AuthUserDao;
 import guru.qa.niffler.dataBase.entity.AuthUserEntity;
 import guru.qa.niffler.dataBase.tpl.DataSources;
-import guru.qa.niffler.mapper.AuthUserEntityRowMapper;
-import guru.qa.niffler.mapper.AuthorityEntityRowMapper;
+import guru.qa.niffler.dataBase.mapper.AuthUserEntityRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
-import javax.sql.DataSource;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.util.List;

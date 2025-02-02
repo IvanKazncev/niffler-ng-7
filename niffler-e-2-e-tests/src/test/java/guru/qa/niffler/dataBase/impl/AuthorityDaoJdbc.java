@@ -24,31 +24,22 @@ public class AuthorityDaoJdbc implements AuthorityDao {
 
 
     @Override
-    public AuthorityEntity createUser(AuthorityEntity authority) {
+    public AuthorityEntity createUser(AuthorityEntity...authority) {
         try (PreparedStatement ps =  holder(CFG.authJDBCUrl()).connection().prepareStatement(
-                "INSERT INTO \"authority\" (authority, user_id) " +
-                        "VALUES (?, ?)",
-                Statement.RETURN_GENERATED_KEYS
+                "INSERT INTO \"authority\" (authority, user_id) VALUES (?, ?)"
         )) {
-            ps.setString(1, String.valueOf(authority.getAuthority()));
-            ps.setObject(2, authority.getUser().getId());
-
-            ps.executeUpdate();
-
-            final UUID generatedKey;
-            try (ResultSet rs = ps.getGeneratedKeys()) {
-                if (rs.next()) {
-                    generatedKey = rs.getObject("id", UUID.class);
-                } else {
-                    throw new SQLException("Запрос не нашел ключи в БД");
-                }
-                authority.setId(generatedKey);
-                return authority;
+            for (AuthorityEntity authorityEntity : authority) {
+                ps.setObject(1,authorityEntity.getUser().getId());
+                ps.setString(2,authorityEntity.getAuthority().name());
+                ps.addBatch();
+                ps.clearParameters();
             }
+            ps.executeBatch();
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+        return authority[0];
     }
 
     @Override

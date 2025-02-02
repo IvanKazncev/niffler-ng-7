@@ -45,7 +45,6 @@ public class AuthUserDaoJdbc implements AuthUserDao {
                 authUser.setId(generatedKey);
                 return authUser;
             }
-
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

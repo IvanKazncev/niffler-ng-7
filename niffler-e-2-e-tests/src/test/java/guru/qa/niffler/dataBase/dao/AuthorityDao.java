@@ -7,6 +7,6 @@ import guru.qa.niffler.dataBase.entity.SpendEntity;
 import java.util.List;
 
 public interface AuthorityDao {
-    AuthorityEntity createUser(AuthorityEntity authority);
+    AuthorityEntity createUser(AuthorityEntity...authority);
     List<AuthorityEntity> findAll();
 }
