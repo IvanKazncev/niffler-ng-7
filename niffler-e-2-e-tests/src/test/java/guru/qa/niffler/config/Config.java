@@ -1,29 +1,28 @@
 package guru.qa.niffler.config;
 
-import org.apache.kafka.common.protocol.types.Field;
-
 public interface Config {
-    static Config getInstance() {
-        return LocalConfig.INSTANCE;
-    }
 
-    String frontUrl();
+  static Config getInstance() {
+    return LocalConfig.INSTANCE;
+  }
 
-    String authUrl();
+  String frontUrl();
 
-    String gatewayUrl();
+  String authUrl();
 
-    String userdataUrl();
+  String authJdbcUrl();
 
-    String userdataJDBCUrl();
+  String gatewayUrl();
 
-    String spendUrl();
+  String userdataUrl();
 
-    String spendJDBCUrl();
+  String userdataJdbcUrl();
 
-    String currencyJBDCUrl();
+  String spendUrl();
 
-    String ghUrl();
+  String spendJdbcUrl();
 
-    String authJDBCUrl();
+  String currencyJdbcUrl();
+
+  String ghUrl();
 }
