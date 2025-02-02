@@ -1,5 +1,7 @@
 package guru.qa.niffler.test.web;
 
+import guru.qa.niffler.data.repository.impl.AuthUserRepositoryHibernate;
+import guru.qa.niffler.data.repository.impl.UserdataUserRepositoryHibernate;
 import guru.qa.niffler.model.CategoryJson;
 import guru.qa.niffler.model.CurrencyValues;
 import guru.qa.niffler.model.SpendJson;
@@ -14,45 +16,45 @@ import java.util.Date;
 
 public class JdbcTest {
 
-  @Test
-  void txTest() {
-    SpendDbClient spendDbClient = new SpendDbClient();
+    @Test
+    void txTest() {
+        SpendDbClient spendDbClient = new SpendDbClient();
 
-    SpendJson spend = spendDbClient.createSpend(
-        new SpendJson(
-            null,
-            new Date(),
-            new CategoryJson(
-                null,
-                "cat-name-tx-3",
-                "duck",
-                false
-            ),
-            CurrencyValues.RUB,
-            1000.0,
-            "spend-name-tx-3",
-            "duck"
-        )
-    );
+        SpendJson spend = spendDbClient.createSpend(
+                new SpendJson(
+                        null,
+                        new Date(),
+                        new CategoryJson(
+                                null,
+                                "cat-name-tx-3",
+                                "duck",
+                                false
+                        ),
+                        CurrencyValues.RUB,
+                        1000.0,
+                        "spend-name-tx-3",
+                        "duck"
+                )
+        );
 
-    System.out.println(spend);
-  }
+        System.out.println(spend);
+    }
 
 
-  static UsersDbClient usersDbClient = new UsersDbClient();
+    static UsersDbClient usersDbClient = new UsersDbClient();
 
-  @ValueSource(strings = {
-      "valentin-10"
-  })
-  @ParameterizedTest
-  void springJdbcTest(String uname) {
+    @ValueSource(strings = {
+            "valentin-10"
+    })
+    @ParameterizedTest
+    void springJdbcTest(String uname) {
 
-    UserJson user = usersDbClient.createUser(
-        uname,
-        "12345"
-    );
-
-    usersDbClient.addIncomeInvitation(user, 1);
-    usersDbClient.addOutcomeInvitation(user, 1);
-  }
+//    UserJson user = usersDbClient.createUser(
+//        uname,
+//        "12345"
+//    );
+        new AuthUserRepositoryHibernate().findByUsername("dulcie.hills").stream().forEach(System.out::println);
+//    usersDbClient.addIncomeInvitation(user, 1);
+//    usersDbClient.addOutcomeInvitation(user, 1);
+    }
 }

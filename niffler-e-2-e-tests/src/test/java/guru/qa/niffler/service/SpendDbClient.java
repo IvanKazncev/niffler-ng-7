@@ -16,7 +16,7 @@ public class SpendDbClient implements SpendClient {
 
   private static final Config CFG = Config.getInstance();
 
-  private final SpendRepository spendRepository = new SpendRepositoryJdbc();
+  private final SpendRepository spendRepository = new SpendRepositoryHibernate();
 
   private final XaTransactionTemplate xaTransactionTemplate = new XaTransactionTemplate(
       CFG.spendJdbcUrl()

@@ -1,9 +1,9 @@
 package guru.qa.niffler.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import guru.qa.niffler.dataBase.entity.AuthUserEntity;
-import guru.qa.niffler.dataBase.entity.Authority;
-import guru.qa.niffler.dataBase.entity.AuthorityEntity;
+import guru.qa.niffler.data.entity.auth.AuthUserEntity;
+import guru.qa.niffler.data.entity.auth.Authority;
+import guru.qa.niffler.data.entity.auth.AuthorityEntity;
 
 
 import java.util.UUID;

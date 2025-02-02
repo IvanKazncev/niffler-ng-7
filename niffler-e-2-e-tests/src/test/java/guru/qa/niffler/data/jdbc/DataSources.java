@@ -33,7 +33,13 @@ public class DataSources {
           dsBean.setMaxPoolSize(10);
           try {
             InitialContext context = new InitialContext();
-            context.bind("java:comp/env/jdbc/" + uniqId, dsBean);
+              if (uniqId.equals("niffler-userdata")) {
+                  context.bind("java:comp/env/jdbc/userdata", dsBean);
+
+              }else {
+                  context.bind("java:comp/env/jdbc/" + uniqId, dsBean);
+
+              }
           } catch (NamingException e) {
             throw new RuntimeException(e);
           }
