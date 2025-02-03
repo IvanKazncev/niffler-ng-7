@@ -34,7 +34,7 @@ public class UserdataUserRepositorySpringJdbc implements UserdataUserRepository 
   }
 
   @Override
-  public void addFriendshipRequest(UserEntity requester, UserEntity addressee) {
+  public void sendInvitation(UserEntity requester, UserEntity addressee) {
     requester.addFriends(FriendshipStatus.PENDING, addressee);
     udUserDao.update(requester);
   }
@@ -45,5 +45,10 @@ public class UserdataUserRepositorySpringJdbc implements UserdataUserRepository 
     addressee.addFriends(FriendshipStatus.ACCEPTED, requester);
     udUserDao.update(requester);
     udUserDao.update(addressee);
+  }
+
+  @Override
+  public void remove(UserEntity user) {
+    udUserDao.delete(user);
   }
 }
