@@ -157,4 +157,16 @@ public class UdUserDaoJdbc implements UdUserDao {
       throw new RuntimeException(e);
     }
   }
+
+  @Override
+  public void delete(UserEntity user) {
+    try (PreparedStatement ps = holder(CFG.userdataJdbcUrl()).connection().prepareStatement(
+            "DELETE FROM \"user\"  WHERE username = ?"
+    )) {
+      ps.setString(1, user.getUsername());
+      ps.executeUpdate();
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
+  }
 }

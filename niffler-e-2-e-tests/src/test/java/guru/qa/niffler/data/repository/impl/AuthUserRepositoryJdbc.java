@@ -45,4 +45,19 @@ public class AuthUserRepositoryJdbc implements AuthUserRepository {
     );
     return userEntity;
   }
+
+  @Override
+  public AuthUserEntity update(AuthUserEntity user) {
+    AuthUserEntity updatedUser = authUserDao.update(user);
+    authAuthorityDao.remove(user.getAuthorities().getFirst());
+    authAuthorityDao.create(user.
+            getAuthorities().toArray(new AuthorityEntity[0]));
+    return updatedUser;
+  }
+
+  @Override
+  public void remove(AuthUserEntity user) {
+    authAuthorityDao.remove(user.getAuthorities().getFirst());
+    authUserDao.remove(user);
+  }
 }

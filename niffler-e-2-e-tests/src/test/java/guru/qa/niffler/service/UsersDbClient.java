@@ -37,6 +37,7 @@ public class UsersDbClient implements UsersClient {
       CFG.userdataJdbcUrl()
   );
 
+
   @Override
   public UserJson createUser(String username, String password) {
     return xaTransactionTemplate.execute(() -> UserJson.fromEntity(
@@ -56,7 +57,7 @@ public class UsersDbClient implements UsersClient {
       for (int i = 0; i < count; i++) {
         xaTransactionTemplate.execute(() -> {
               final String username = randomUsername();
-              userdataUserRepository.addFriendshipRequest(
+              userdataUserRepository.sendInvitation(
                   createNewUser(username, "12345"),
                   targetEntity
               );
@@ -77,7 +78,7 @@ public class UsersDbClient implements UsersClient {
       for (int i = 0; i < count; i++) {
         xaTransactionTemplate.execute(() -> {
               String username = randomUsername();
-          userdataUserRepository.addFriendshipRequest(
+          userdataUserRepository.sendInvitation(
               targetEntity,
               createNewUser(username, "12345")
           );
