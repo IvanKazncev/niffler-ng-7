@@ -2,6 +2,8 @@ package guru.qa.niffler.page;
 
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
+import guru.qa.niffler.page.components.NavigateMenuComponent;
+import io.qameta.allure.Step;
 
 import static com.codeborne.selenide.Condition.attributeMatching;
 import static com.codeborne.selenide.Condition.disabled;
@@ -22,7 +24,10 @@ public class ProfilePage {
   private final SelenideElement archivedSwitcher = $(".MuiSwitch-input");
   private final ElementsCollection bubbles = $$(".MuiChip-filled.MuiChip-colorPrimary");
   private final ElementsCollection bubblesArchived = $$(".MuiChip-filled.MuiChip-colorDefault");
+  private final SelenideElement showArchivedCheckbox = $("input[type='checkbox']");
 
+
+  NavigateMenuComponent navigateMenuComponent = new NavigateMenuComponent();
 
   public ProfilePage setName(String name) {
     nameInput.clear();
@@ -75,4 +80,15 @@ public class ProfilePage {
     submitButton.click();
     return this;
   }
+  @Step("Нажатие на чек-бокс отображения архивных категорий на странице профиля")
+  public ProfilePage clickArchivedCheckbox() {
+    showArchivedCheckbox.click();
+    return this;
+  }
+
+  @Step("Проверка нахождения категории <categoryName> в отображаемом списке на странице профиля")
+  public void checkCategoryInCategoryList(String categoryName){
+    $$(".css-17u3xlq").findBy(text(categoryName)).shouldBe(visible);
+  }
+
 }
