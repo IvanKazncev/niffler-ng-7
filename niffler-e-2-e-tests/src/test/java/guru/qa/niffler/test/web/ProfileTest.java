@@ -8,6 +8,7 @@ import guru.qa.niffler.jupiter.annotation.meta.WebTest;
 import guru.qa.niffler.model.CategoryJson;
 import guru.qa.niffler.page.LoginPage;
 import guru.qa.niffler.page.ProfilePage;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 @WebTest
@@ -16,34 +17,33 @@ public class ProfileTest {
   private static final Config CFG = Config.getInstance();
 
   @User(
-      username = "duck",
-      categories = @Category(
-          archived = true
-      )
+          username = "ivan",
+          categories = @Category( archived = true)
   )
+  @DisplayName("Архивная категория должна присутствовать и отображаться в списке категорий")
   @Test
   void archivedCategoryShouldPresentInCategoriesList(CategoryJson[] category) {
     Selenide.open(CFG.frontUrl(), LoginPage.class)
-        .successLogin("duck", "12345")
-        .checkThatPageLoaded();
-
-    Selenide.open(CFG.frontUrl() + "profile", ProfilePage.class)
-        .checkArchivedCategoryExists(category[0].name());
+            .login(category[0].username(), "123")
+            .navigateMenuComponent
+            .clickAccountMenuButton()
+            .clickProfileButton()
+            .clickArchivedCheckbox()
+            .checkCategoryInCategoryList(category[0].name());
   }
 
   @User(
-      username = "duck",
-      categories = @Category(
-          archived = false
-      )
+          username = "ivan",
+          categories = @Category( archived = false)
   )
+  @DisplayName("Активная категория должна присутствовать и отображаться в списке категорий")
   @Test
   void activeCategoryShouldPresentInCategoriesList(CategoryJson category) {
     Selenide.open(CFG.frontUrl(), LoginPage.class)
-        .successLogin("duck", "12345")
-        .checkThatPageLoaded();
-
-    Selenide.open(CFG.frontUrl() + "profile", ProfilePage.class)
-        .checkCategoryExists(category.name());
+            .login("ivan", "123")
+            .navigateMenuComponent
+            .clickAccountMenuButton()
+            .clickProfileButton()
+            .checkCategoryInCategoryList(category.name());
   }
 }
