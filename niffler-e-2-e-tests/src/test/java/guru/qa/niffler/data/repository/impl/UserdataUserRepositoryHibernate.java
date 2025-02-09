@@ -7,37 +7,39 @@ import guru.qa.niffler.data.repository.UserdataUserRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Optional;
 import java.util.UUID;
 
 import static guru.qa.niffler.data.jpa.EntityManagers.em;
-
+@ParametersAreNonnullByDefault
 public class UserdataUserRepositoryHibernate implements UserdataUserRepository {
 
   private static final Config CFG = Config.getInstance();
 
   private final EntityManager entityManager = em(CFG.userdataJdbcUrl());
-
+  @Nonnull
   @Override
   public UserEntity create(UserEntity user) {
     entityManager.joinTransaction();
     entityManager.persist(user);
     return user;
   }
-
+  @Nonnull
   @Override
   public UserEntity update(UserEntity user) {
     entityManager.joinTransaction();
     return entityManager.merge(user);
   }
-
+  @Nonnull
   @Override
   public Optional<UserEntity> findById(UUID id) {
     return Optional.ofNullable(
         entityManager.find(UserEntity.class, id)
     );
   }
-
+  @Nonnull
   @Override
   public Optional<UserEntity> findByUsername(String username) {
     try {
@@ -52,20 +54,20 @@ public class UserdataUserRepositoryHibernate implements UserdataUserRepository {
   }
 
   @Override
-  public void sendInvitation(UserEntity requester, UserEntity addressee) {
+  public void sendInvitation(@Nonnull UserEntity requester, @Nonnull UserEntity addressee) {
     entityManager.joinTransaction();
     requester.addFriends(FriendshipStatus.PENDING, addressee);
   }
 
   @Override
-  public void addFriend(UserEntity requester, UserEntity addressee) {
+  public void addFriend(@Nonnull UserEntity requester, @Nonnull UserEntity addressee) {
     entityManager.joinTransaction();
     requester.addFriends(FriendshipStatus.ACCEPTED, addressee);
     addressee.addFriends(FriendshipStatus.ACCEPTED, requester);
   }
 
   @Override
-  public void remove(UserEntity user) {
+  public void remove(@Nonnull UserEntity user) {
     entityManager.remove(user);
   }
 }

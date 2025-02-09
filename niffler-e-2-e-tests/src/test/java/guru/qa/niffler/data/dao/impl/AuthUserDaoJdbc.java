@@ -6,6 +6,8 @@ import guru.qa.niffler.data.entity.auth.AuthUserEntity;
 import guru.qa.niffler.data.mapper.AuthUserEntityRowMapper;
 import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -15,12 +17,12 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static guru.qa.niffler.data.jdbc.Connections.holder;
-
+@ParametersAreNonnullByDefault
 public class AuthUserDaoJdbc implements AuthUserDao {
 
   private static final Config CFG = Config.getInstance();
   private final String url = CFG.authJdbcUrl();
-
+  @Nonnull
   @Override
   public AuthUserEntity create(AuthUserEntity user) {
     try (PreparedStatement ps = holder(url).connection().prepareStatement(
@@ -52,7 +54,7 @@ public class AuthUserDaoJdbc implements AuthUserDao {
       throw new RuntimeException(e);
     }
   }
-
+  @Nonnull
   @Override
   public Optional<AuthUserEntity> findById(UUID id) {
     try (PreparedStatement ps = holder(url).connection().prepareStatement("""
@@ -75,7 +77,7 @@ public class AuthUserDaoJdbc implements AuthUserDao {
       throw new RuntimeException(e);
     }
   }
-
+  @Nonnull
   @Override
   public Optional<AuthUserEntity> findByUsername(String username) {
     try (PreparedStatement ps = holder(url).connection().prepareStatement("""
@@ -98,7 +100,7 @@ public class AuthUserDaoJdbc implements AuthUserDao {
       throw new RuntimeException(e);
     }
   }
-
+  @Nonnull
   @Override
   public List<AuthUserEntity> findAll() {
     try (PreparedStatement ps = holder(url).connection().prepareStatement(
@@ -119,7 +121,7 @@ public class AuthUserDaoJdbc implements AuthUserDao {
       throw new RuntimeException(e);
     }
   }
-
+  @Nonnull
   @Override
   public AuthUserEntity update(AuthUserEntity user) {
     try (PreparedStatement ps = holder(CFG.authJdbcUrl()).connection().prepareStatement(
@@ -149,7 +151,7 @@ public class AuthUserDaoJdbc implements AuthUserDao {
       throw new RuntimeException("Error updating user", e);
     }
   }
-
+  @Nonnull
   @Override
   public void remove(AuthUserEntity user) {
     try (PreparedStatement ps = holder(CFG.authJdbcUrl()).connection().prepareStatement(

@@ -2,40 +2,74 @@ package guru.qa.niffler.page;
 
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
+import guru.qa.niffler.page.components.Header;
+import guru.qa.niffler.page.components.SearchField;
+import io.qameta.allure.Step;
+import lombok.Getter;
 
+import javax.annotation.Nonnull;
+import javax.annotation.processing.Generated;
+
+import static com.codeborne.selenide.ClickOptions.usingJavaScript;
 import static com.codeborne.selenide.CollectionCondition.size;
 import static com.codeborne.selenide.CollectionCondition.textsInAnyOrder;
-import static com.codeborne.selenide.Condition.text;
-import static com.codeborne.selenide.Condition.visible;
+import static com.codeborne.selenide.Condition.*;
+import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$;
-
+@Getter
 public class FriendsPage {
 
-    private final SelenideElement emptyTabPanelText = $("#simple-tabpanel-friends").$("p");
-    private final ElementsCollection friendsTableRows = $$("#friends tr");
-    private final ElementsCollection requestsTableRows = $$("#requests tr");
-    private final SelenideElement searchInput = $("input[aria-label='search']");
+    private final SearchField searchField = new SearchField();
+    private final Header header = new Header();
 
-    public void shouldSeeEmptyTabPanelFriends() {
-        emptyTabPanelText.should(visible);
-        String expected = "There are no users yet";
-        emptyTabPanelText.shouldHave(text(expected));
+    private final SelenideElement
+            friendsTable = $("#friends"),
+            requestTable = $("#requests"),
+            popup = $("div[role='dialog']"),
+            simpleTableFriend = $("div[id='simple-tabpanel-friends']");
+
+    @Step("Принятие входящего приглашения дружбы от <username>")
+    @Nonnull
+    public FriendsPage acceptFriendInvitation(String username) {
+        requestTable.$$("tr").find(text(username))
+                .$(byText("Accept")).click();
+        return this;
     }
 
-    public void shouldSeeFriendInFriendsTable(String friendName) {
-        searchInput.setValue(friendName);
-        SelenideElement friendRow = friendsTableRows.find(text(friendName));
-        friendRow.shouldBe(visible);
+    @Step("Отклонение входящего приглашения дружбы от {username}")
+    @Nonnull
+    public FriendsPage declineFriendInvitation(String username) {
+        requestTable.$$("tr").find(text(username))
+                .$(byText("Decline")).click();
+        popup.$(byText("Decline")).click(usingJavaScript());
+        return this;
     }
 
+    @Step("Проверка, что список друзей содержит {friendUserName}")
+    public void checkThatFriendsExist(String... friendUserName) {
+        friendsTable.$$("tr").shouldHave(textsInAnyOrder(friendUserName));
+    }
 
-    public void shouldSeeFriendNameRequestInRequestsTable(String friendNameRequest) {
-        // Вводим имя друга в поле поиска
-        searchInput.setValue(friendNameRequest);
+    @Step("Проверка, что приглашение в друзья для {friendUserName} принято")
+    public void checkThatFriendAccepted(String friendUserName) {
+        requestTable.$$("tr").find(text(friendUserName))
+                .$(byText("Unfriend")).shouldBe(exist);
+    }
 
-        // Проверяем, что строка с запросом от друга отображается в таблице
-        SelenideElement requestRow = requestsTableRows.find(text(friendNameRequest));
-        requestRow.shouldBe(visible);
+    @Step("Проверка, что список друзей пустой")
+    public void checkThatFriendsDoNotExist() {
+        friendsTable.shouldNotBe(exist);
+    }
+
+    @Step("Проверка входящего запроса для дружбы")
+    public void checkIncomeFriendRequest(String incomeUserName) {
+        searchField.search(incomeUserName);
+        requestTable.$$("tr").find(text(incomeUserName)).shouldBe(visible);
+    }
+
+    @Step("Проверка входящего запроса для дружбы")
+    public void checkThatFriendsTableEmpty() {
+        simpleTableFriend.shouldHave(text("There are no users yet"));
     }
 }

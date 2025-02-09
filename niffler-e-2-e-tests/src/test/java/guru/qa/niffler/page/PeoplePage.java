@@ -1,19 +1,33 @@
 package guru.qa.niffler.page;
 
 import com.codeborne.selenide.SelenideElement;
+import guru.qa.niffler.page.components.Header;
+import guru.qa.niffler.page.components.SearchField;
+import lombok.Getter;
+
+import javax.annotation.ParametersAreNonnullByDefault;
 
 import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Selenide.$;
 
+@Getter
+@ParametersAreNonnullByDefault
 public class PeoplePage {
 
-  private final SelenideElement peopleTab = $("a[href='/people/friends']");
-  private final SelenideElement allTab = $("a[href='/people/all']");
-  private final SelenideElement peopleTable = $("#all");
+  private final SearchField searchField = new SearchField();
+  private final Header header = new Header();
 
-  public PeoplePage checkInvitationSentToUser(String username) {
-    SelenideElement friendRow = peopleTable.$$("tr").find(text(username));
-    friendRow.shouldHave(text("Waiting..."));
-    return this;
+  private final SelenideElement
+          allPeopleTable = $("#all"),
+          pagePrevButton = $("#page-prev"),
+          pageNextButton = $("#page-next"),
+          peopleTab = $("a[href='/people/friends']"),
+          allTab = $("a[href='/people/all']");
+
+  public void checkOutcomeFriendRequest(String outcomeUserName) {
+    searchField.search(outcomeUserName);
+    allPeopleTable.$$("tr").findBy(text(outcomeUserName))
+            .shouldHave(text("Waiting..."));
+
   }
 }
