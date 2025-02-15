@@ -12,8 +12,10 @@ import org.openqa.selenium.By;
 import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.$;
+
 @Getter
-public class MainPage {
+public class MainPage extends BasePage<MainPage> {
+
 
     private final ElementsCollection tableRows = $("#spendings tbody").$$("tr");
     private final SelenideElement historyOfSpending = $("#spendings");
