@@ -12,18 +12,19 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
 import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-
+@ParametersAreNonnullByDefault
 public class UdUserDaoSpringJdbc implements UdUserDao {
 
     private static final Config CFG = Config.getInstance();
     private final String url = CFG.userdataJdbcUrl();
-
+    @Nonnull
     @Override
     public UserEntity create(UserEntity user) {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(url));
@@ -50,7 +51,7 @@ public class UdUserDaoSpringJdbc implements UdUserDao {
         user.setId(generatedKey);
         return user;
     }
-
+    @Nonnull
     @Override
     public UserEntity update(UserEntity user) {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(url));
@@ -92,7 +93,7 @@ public class UdUserDaoSpringJdbc implements UdUserDao {
                 });
         return user;
     }
-
+    @Nonnull
     @Override
     public Optional<UserEntity> findById(UUID id) {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(url));
@@ -110,7 +111,7 @@ public class UdUserDaoSpringJdbc implements UdUserDao {
             return Optional.empty();
         }
     }
-
+    @Nonnull
     @Override
     public Optional<UserEntity> findByUsername(String username) {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(url));
@@ -124,7 +125,7 @@ public class UdUserDaoSpringJdbc implements UdUserDao {
                 )
         );
     }
-
+    @Nonnull
     @Override
     public List<UserEntity> findAll() {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(url));
@@ -135,7 +136,7 @@ public class UdUserDaoSpringJdbc implements UdUserDao {
                 UserdataUserEntityRowMapper.instance
         );
     }
-
+    @Nonnull
     @Override
     public void delete(UserEntity user) {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(CFG.userdataJdbcUrl()));

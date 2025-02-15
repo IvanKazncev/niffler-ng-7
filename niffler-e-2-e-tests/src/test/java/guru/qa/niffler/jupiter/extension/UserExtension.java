@@ -40,9 +40,7 @@ public class UserExtension implements BeforeEachCallback,
                 context.getUniqueId(),
                 user.addTestData(
                     new TestData(
-                        defaultPassword,
-                        new ArrayList<>(),
-                        new ArrayList<>()
+                        defaultPassword
                     )
                 )
             );

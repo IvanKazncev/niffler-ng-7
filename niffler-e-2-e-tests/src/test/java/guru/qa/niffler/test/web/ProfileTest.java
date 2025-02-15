@@ -6,8 +6,10 @@ import guru.qa.niffler.jupiter.annotation.Category;
 import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.jupiter.annotation.meta.WebTest;
 import guru.qa.niffler.model.CategoryJson;
+import guru.qa.niffler.model.UserJson;
 import guru.qa.niffler.page.LoginPage;
 import guru.qa.niffler.page.ProfilePage;
+import guru.qa.niffler.utils.RandomDataUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -45,5 +47,19 @@ public class ProfileTest {
             .clickAccountMenuButton()
             .clickProfileButton()
             .checkCategoryInCategoryList(category.name());
+  }
+  @User
+  @Test
+  void updateAllFieldsProfile(UserJson user) {
+    new LoginPage()
+            .open()
+            .login(user.username(), user.testData().password())
+            .getHeader()
+            .toProfilePage()
+            .uploadImage("resources/img/bait.png")
+            .setName(RandomDataUtils.randomName())
+            .setNewCategory(RandomDataUtils.randomCategoryName())
+            .saveChanges()
+            .checkAlertMessage("Profile successfully updated");
   }
 }

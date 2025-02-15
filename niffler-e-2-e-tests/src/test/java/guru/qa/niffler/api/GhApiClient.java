@@ -6,8 +6,12 @@ import lombok.SneakyThrows;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
+import java.io.IOException;
 import java.util.Objects;
 
+@ParametersAreNonnullByDefault
 public class GhApiClient {
 
   private static final String GH_TOKEN_ENV = "GITHUB_TOKEN";
@@ -19,8 +23,8 @@ public class GhApiClient {
 
   private final GhApi ghApi = retrofit.create(GhApi.class);
 
-  @SneakyThrows
-  public String issueState(String issueNumber) {
+  @Nonnull
+  public String issueState(String issueNumber) throws IOException {
     JsonNode responseBody = ghApi.issue(
         "Bearer " + System.getenv(GH_TOKEN_ENV),
         issueNumber

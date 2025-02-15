@@ -1,22 +1,17 @@
 package guru.qa.niffler.test.web;
 
-import com.codeborne.selenide.Selenide;
+
 import guru.qa.niffler.config.Config;
-import guru.qa.niffler.jupiter.annotation.Friend;
-import guru.qa.niffler.jupiter.annotation.IncomeInvitation;
-import guru.qa.niffler.jupiter.annotation.OutcomeInvitation;
+
 import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.jupiter.annotation.meta.WebTest;
-import guru.qa.niffler.jupiter.extension.UsersQueueExtension.StaticUser;
-import guru.qa.niffler.jupiter.extension.UsersQueueExtension.UserType;
+
 import guru.qa.niffler.model.UserJson;
 import guru.qa.niffler.page.LoginPage;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static guru.qa.niffler.jupiter.extension.UsersQueueExtension.UserType.Type.EMPTY;
-import static guru.qa.niffler.jupiter.extension.UsersQueueExtension.UserType.Type.WITH_FRIEND;
-import static guru.qa.niffler.jupiter.extension.UsersQueueExtension.UserType.Type.WITH_INCOME_REQUEST;
-import static guru.qa.niffler.jupiter.extension.UsersQueueExtension.UserType.Type.WITH_OUTCOME_REQUEST;
+
 
 @WebTest
 public class FriendsWebTest {
@@ -24,57 +19,85 @@ public class FriendsWebTest {
     private static final Config CFG = Config.getInstance();
 
 
-    @User
-    @Test
-    void friendsTableShouldBeEmptyForNewUser(UserJson user) {
-        Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .login(user.username(), user.testData().password())
-                .openFriendsPage()
-                .shouldSeeEmptyTabPanelFriends();
-    }
-
     @User(
-            friends = {
-                    @Friend
-            }
+            friends = 1
     )
+    @DisplayName("Друг должен присутствовать в таблице друзей")
     @Test
     void friendShouldBePresentInFriendsTable(UserJson user) {
-        Selenide.open(CFG.frontUrl(), LoginPage.class)
+        final String friendUsername = user.testData().friendsUsernames()[0];
+        new LoginPage()
+                .open()
                 .login(user.username(), user.testData().password())
-                .openFriendsPage()
-                .shouldSeeFriendInFriendsTable(
-                        user.testData().friends().get(0).username());
+                .getHeader()
+                .toFriendsPage()
+                .checkThatFriendsExist(friendUsername);
 
     }
+    @User
+    @DisplayName("Таблица друзей должна быть пустой для нового пользователя")
+    @Test
+    void friendsTableShouldBeEmptyForNewUser(UserJson user) {
+        new LoginPage()
+                .open()
+                .login(user.username(), user.testData().password())
+                .getHeader()
+                .toFriendsPage()
+                .checkThatFriendsDoNotExist();
+    }
 
-    @User(
-            incomeInvitations = {
-                    @IncomeInvitation
-            }
-    )
+    @User(incomeInvitations = 1)
+    @DisplayName("Проверка отображения входящего запроса дружбы в таблице друзей")
     @Test
     void incomeInvitationBePresentInFriendsTable(UserJson user) {
-        Selenide.open(CFG.frontUrl(), LoginPage.class)
+        new LoginPage()
+                .open()
                 .login(user.username(), user.testData().password())
-                .openFriendsPage()
-                .shouldSeeFriendNameRequestInRequestsTable(
-                        user.testData().incomeInvitations().get(0).username());
-
+                .getHeader()
+                .toFriendsPage()
+                .checkIncomeFriendRequest(user.testData().incomeInvitationsUsernames()[0]);
     }
 
-    @User(
-            outcomeInvitations = {
-                    @OutcomeInvitation
-            }
-    )
+    @User(outcomeInvitations = 1)
+    @DisplayName("Проверка отображения исходящего запроса дружбы в таблице людей")
     @Test
     void outcomeInvitationBePresentInAllPeoplesTable(UserJson user) {
-        Selenide.open(CFG.frontUrl(), LoginPage.class)
+        new LoginPage()
+                .open()
                 .login(user.username(), user.testData().password())
-                .openAllPeoplePage()
-                .shouldSeeOutcomeInvitationInAllPeoplesTable(
-                        user.testData().outcomeInvitations().get(0).username());
+                .getHeader()
+                .toAllPeoplesPage()
+                .checkOutcomeFriendRequest(user.testData().outcomeInvitationsUsernames()[0]);
+    }
+
+    @User(incomeInvitations = 1)
+    @DisplayName("Проверка возможности принять входящее приглашение дружбы")
+    @Test
+    void acceptInvitation(UserJson user) {
+        final String userIncome = user.testData().incomeInvitationsUsernames()[0];
+
+        new LoginPage()
+                .open()
+                .login(user.username(), user.testData().password())
+                .getHeader()
+                .toFriendsPage()
+                .acceptFriendInvitation(userIncome)
+                .checkThatFriendAccepted(userIncome);
+    }
+
+    @User(incomeInvitations = 1)
+    @DisplayName("Проверка возможности отклонить входящее приглашение дружбы")
+    @Test
+    void declineInvitation(UserJson user) {
+        final String userIncome = user.testData().incomeInvitationsUsernames()[0];
+
+        new LoginPage()
+                .open()
+                .login(user.username(), user.testData().password())
+                .getHeader()
+                .toFriendsPage()
+                .declineFriendInvitation(userIncome)
+                .checkThatFriendsTableEmpty();
     }
 }
 
