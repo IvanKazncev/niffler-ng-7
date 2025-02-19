@@ -18,48 +18,50 @@ import java.time.LocalDate;
 @WebTest
 public class SpendingWebTest {
 
-  private static final Config CFG = Config.getInstance();
+    private static final Config CFG = Config.getInstance();
 
-  @User(
-          username = "ivan",
-          spendings = @Spending(
-                  category = "Обучение",
-                  description = "Java Advanced 2.0",
-                  amount = 90000)
-  )
-  @Test
-  void categoryDescriptionShouldBeChangedFromTable(SpendJson spend) {
-    final String newDescription = "Обучение Niffler Next Generation";
-    new LoginPage()
-            .open()
-            .login("ivan", "123")
-            .editSpending(spend.description())
-            .editDescription(newDescription)
-            .saveChange();
+    @User(
+            username = "ivan",
+            spendings = @Spending(
+                    category = "Обучение",
+                    description = "Java Advanced 2.0",
+                    amount = 90000)
+    )
+    @Test
+    void categoryDescriptionShouldBeChangedFromTable(SpendJson spend) {
+        final String newDescription = "Обучение Niffler Next Generation";
+        new LoginPage()
+                .open()
+                .login("ivan", "123")
+                .editSpending(spend.description())
+                .editDescription(newDescription)
+                .saveChange()
+                .checkAlertMessage("Spending is edited successfully")
+                .checkThatTableContainsSpending(newDescription);
+    }
 
-    new MainPage().checkThatTableContainsSpending(newDescription);
-  }
+    @User
+    @Test
+    void shouldAddNewSpending(UserJson user) {
+        String category = "bait";
+        int amount = 100;
+        LocalDate currentDate = LocalDate.now();
+        String description = RandomDataUtils.randomSentence(1);
 
-  @User
-  @Test
-  void shouldAddNewSpending(UserJson user) {
-    String category = "bait";
-    int amount = 100;
-    LocalDate currentDate = LocalDate.now();
-    String description = RandomDataUtils.randomSentence(1);
+        new LoginPage()
+                .open()
+                .login(user.username(), user.testData().password())
+                .getHeader()
+                .addSpendingPage()
+                .editCategory(category)
+                .editAmount(amount)
+                .editDate(currentDate)
+                .editDescription(description)
+                .saveChange()
+                .checkAlertMessage("Spending is edited successfully")
+                .getSpendingTable()
+                .checkTableContains(description);
+    }
 
-    new LoginPage()
-            .open()
-            .login(user.username(), user.testData().password())
-            .getHeader()
-            .addSpendingPage()
-            .editCategory(category)
-            .editAmount(amount)
-            .editDate(currentDate)
-            .editDescription(description)
-            .saveChange();
-    new MainPage().getSpendingTable()
-            .checkTableContains(description);
-  }
 }
 
