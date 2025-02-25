@@ -62,7 +62,7 @@ public class SpendingExtension implements BeforeEachCallback, ParameterResolver 
               );
             }
             if (user != null) {
-              user.testData().spendings().addAll(
+              user.testData().spends().addAll(
                   createdSpends
               );
             } else {
