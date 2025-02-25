@@ -41,6 +41,17 @@ public class ProfilePage extends BasePage<MainPage> {
             saveChangesButton = $("button[type='submit']"),
             alert = $(".MuiSnackbar-root");
 
+    private final ElementsCollection
+            listCategory = $("div").$$("div[role='button']"),
+            archiveSubmitButtons = $$("div[role='dialog'] button");
+
+    @Step("Архивирование категории {categoryName}")
+    public ProfilePage archivedCategory(String categoryName) {
+        listCategory.find(text(categoryName)).parent().parent().$("button[aria-label='Archive category']").click();
+        archiveSubmitButtons.find(text("Archive")).click();
+        return this;
+    }
+
     @Nonnull
     @Step("Загрузка изображения {file} на странице профиля")
     public ProfilePage uploadImage(String file) {
