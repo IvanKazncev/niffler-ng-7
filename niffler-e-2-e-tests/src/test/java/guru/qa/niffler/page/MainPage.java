@@ -6,12 +6,16 @@ import guru.qa.niffler.page.components.Header;
 import guru.qa.niffler.page.components.NavigateMenuComponent;
 import guru.qa.niffler.page.components.SearchField;
 import guru.qa.niffler.page.components.SpendingTable;
+import io.qameta.allure.Step;
 import lombok.Getter;
 import org.openqa.selenium.By;
+
+import javax.annotation.Nonnull;
 
 import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.$;
+import static com.codeborne.selenide.Selenide.$$;
 
 @Getter
 public class MainPage extends BasePage<MainPage> {
@@ -24,6 +28,8 @@ public class MainPage extends BasePage<MainPage> {
     private final SelenideElement menuBtn = $("button[aria-label='Menu']");
     private final SelenideElement friendsLink = $("a[href='/people/friends']");
     private final SelenideElement allPeopleLink = $("a[href='/people/all']");
+    private final SelenideElement pieChart = $("canvas[role='img']");
+    private final ElementsCollection categoryContainerComponents = $$("#legend-container li");
 
     public final NavigateMenuComponent navigateMenuComponent = new NavigateMenuComponent();
     private final SearchField searchField = new SearchField();
@@ -59,6 +65,19 @@ public class MainPage extends BasePage<MainPage> {
     public void checkThatMainPageVisible() {
         historyOfSpending.should(visible);
         statistic.should(visible);
+    }
+
+    @Step("Проверяем в блоке Statistics ячейку с категорией и суммой")
+    public void checkCellCategoryAndAmountInStatisticsBlock(String categoryName, String amount) {
+        categoryContainerComponents.findBy(text(categoryName)).shouldHave(text(amount));
+    }
+    @Step("Нажатие кнопки изменения траты {spendingDescription}")
+    @Nonnull
+    public EditSpendingPage editSpendingClick(String spendingDescription) {
+        searchField.search(spendingDescription);
+        tableRows.find(text(spendingDescription)).$("td", 5).click();
+
+        return new EditSpendingPage();
     }
 
 }
