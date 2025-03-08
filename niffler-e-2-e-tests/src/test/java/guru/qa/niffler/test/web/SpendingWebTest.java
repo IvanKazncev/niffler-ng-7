@@ -1,8 +1,7 @@
 package guru.qa.niffler.test.web;
 
-import com.codeborne.selenide.Selenide;
+import guru.qa.niffler.condition.Color;
 import guru.qa.niffler.config.Config;
-import guru.qa.niffler.jupiter.annotation.DisabledByIssue;
 import guru.qa.niffler.jupiter.annotation.ScreenShotTest;
 import guru.qa.niffler.jupiter.annotation.Spending;
 import guru.qa.niffler.jupiter.annotation.User;
@@ -71,6 +70,7 @@ public class SpendingWebTest {
                 .getSpendingTable()
                 .checkTableContains(description);
     }
+
     @DisplayName("Проверка компонента статистики после редактирования траты")
     @User(
             spendings = @Spending(
@@ -150,15 +150,11 @@ public class SpendingWebTest {
                 .archivedCategory(user.testData().spends().getFirst().category().name())
                 .getHeader()
                 .toMainPage()
-                .checkCellCategoryAndAmountInStatisticsBlock("Archived",String.format("%.0f",user.testData().spends().getFirst().amount()));
+                .getStatComponent()
+                .checkCellCategoryAndAmountInStatisticsBlock("Archived", String.format("%.0f", user.testData().spends().getFirst().amount()))
+                .checkStatisticImage(expected)
+                .checkBubbles(Color.yellow);
 
-        Thread.sleep(2000);
-        BufferedImage actual = ImageIO.read(Objects.requireNonNull(new MainPage().getPieChart().screenshot()));
-
-        Assertions.assertFalse(new ScreenDiffResult(
-                actual,
-                expected
-        ));
     }
 
 }
