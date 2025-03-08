@@ -4,7 +4,9 @@ import com.codeborne.selenide.CollectionCondition;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
+import guru.qa.niffler.condition.Bubble;
 import guru.qa.niffler.condition.Color;
+import guru.qa.niffler.condition.StatConditions;
 import guru.qa.niffler.jupiter.extension.ScreenShotTestExtension;
 import guru.qa.niffler.utils.ScreenDiffResult;
 import io.qameta.allure.Step;
@@ -65,10 +67,24 @@ public class StatComponent extends BaseComponent<StatComponent> {
         return ImageIO.read(requireNonNull(chart.screenshot()));
     }
 
-    @Step("Проверяем, что изображение блока Statistics имеет цвет {expectedColors}")
+    @Step("Проверяем, что состояние диаграммы трат имеет {expectedBubbles}")
     @Nonnull
-    public StatComponent checkBubbles(Color... expectedColors) {
-        bubbles.should(color(expectedColors));
+    public StatComponent checkBubbles(Bubble expectedBubbles) {
+        bubbles.first().should(StatConditions.statBubbles(expectedBubbles));
+        return this;
+    }
+
+    @Step("Проверяем, что состояние диаграммы трат имеет {expectedBubbles} в любом порядке")
+    @Nonnull
+    public StatComponent checkBubblesInAnyOrder(Bubble... expectedBubbles) {
+        bubbles.should(StatConditions.statBubblesInAnyOrder(expectedBubbles));
+        return this;
+    }
+
+    @Step("Проверяем, что состояние диаграммы трат имеет среди прочих искомые {expectedBubbles}")
+    @Nonnull
+    public StatComponent checkBubblesContains(Bubble... expectedBubbles) {
+        bubbles.should(StatConditions.statBubblesContains(expectedBubbles));
         return this;
     }
 }
