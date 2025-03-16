@@ -1,8 +1,10 @@
 package guru.qa.niffler.page;
 
+import com.codeborne.selenide.SelenideDriver;
 import com.codeborne.selenide.SelenideElement;
 import guru.qa.niffler.config.Config;
 import io.qameta.allure.Step;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -14,7 +16,15 @@ public abstract class BasePage<T extends BasePage<?>> {
 
     protected static final Config CONFIG = Config.getInstance();
 
-    private final SelenideElement alert = $(".MuiSnackbar-root");
+    private final SelenideElement alert;
+
+    public BasePage() {
+        this.alert = $(".MuiSnackbar-root");
+    }
+
+    public BasePage(@NotNull SelenideDriver driver) {
+        this.alert = driver.$(".MuiSnackbar-root");
+    }
 
     @Step("Проверка, что alert-message содержит текст {value}")
     @Nonnull
