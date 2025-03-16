@@ -2,10 +2,7 @@ package guru.qa.niffler.page;
 
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
-import guru.qa.niffler.page.components.Header;
-import guru.qa.niffler.page.components.NavigateMenuComponent;
-import guru.qa.niffler.page.components.SearchField;
-import guru.qa.niffler.page.components.SpendingTable;
+import guru.qa.niffler.page.components.*;
 import io.qameta.allure.Step;
 import lombok.Getter;
 import org.openqa.selenium.By;
@@ -35,6 +32,7 @@ public class MainPage extends BasePage<MainPage> {
     private final SearchField searchField = new SearchField();
     private final Header header = new Header();
     private final SpendingTable spendingTable = new SpendingTable();
+    private final StatComponent statComponent = new StatComponent();
 
     public EditSpendingPage editSpending(String spendingDescription) {
         tableRows.find(text(spendingDescription)).$$("td").get(5).click();
@@ -71,6 +69,7 @@ public class MainPage extends BasePage<MainPage> {
     public void checkCellCategoryAndAmountInStatisticsBlock(String categoryName, String amount) {
         categoryContainerComponents.findBy(text(categoryName)).shouldHave(text(amount));
     }
+
     @Step("Нажатие кнопки изменения траты {spendingDescription}")
     @Nonnull
     public EditSpendingPage editSpendingClick(String spendingDescription) {
@@ -78,6 +77,12 @@ public class MainPage extends BasePage<MainPage> {
         tableRows.find(text(spendingDescription)).$("td", 5).click();
 
         return new EditSpendingPage();
+    }
+
+    @Nonnull
+    public StatComponent getStatComponent() {
+        statComponent.getSelf().scrollIntoView(true);
+        return statComponent;
     }
 
 }
