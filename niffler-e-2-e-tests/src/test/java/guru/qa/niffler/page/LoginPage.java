@@ -1,10 +1,12 @@
 package guru.qa.niffler.page;
 
 import com.codeborne.selenide.Selenide;
+import com.codeborne.selenide.SelenideDriver;
 import com.codeborne.selenide.SelenideElement;
 import guru.qa.niffler.config.Config;
 import io.qameta.allure.Step;
 import lombok.Getter;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -15,11 +17,30 @@ import static com.codeborne.selenide.Selenide.$;
 public class LoginPage extends BasePage<LoginPage> {
 
 
-    private final SelenideElement usernameInput = $("input[name='username']");
-    private final SelenideElement passwordInput = $("input[name='password']");
-    private final SelenideElement submitButton = $("button[type='submit']");
-    private final SelenideElement registerButton = $("a[href='/register']");
-    private final SelenideElement errorContainer = $(".form__error");
+    private final SelenideElement
+            usernameInput,
+            passwordInput,
+            submitButton,
+            registerButton,
+            errorContainer;
+
+    public LoginPage() {
+        this.usernameInput = $("input[name='username']");
+        this.passwordInput = $("input[name='password']");
+        this.submitButton = $("button[type='submit']");
+        this.registerButton = $("a[href='/register']");
+        this.errorContainer = $(".form__error");
+    }
+
+    public LoginPage(SelenideDriver driver) {
+        super(driver);
+        this.usernameInput = driver.$("input[name='username']");
+        this.passwordInput = driver.$("input[name='password']");
+        this.submitButton = driver.$("button[type='submit']");
+        this.registerButton = $("a[href='/register']");
+        this.errorContainer = $(".form__error");
+    }
+
     private final static String LOGIN_PAGE_URL = Config.getInstance().authUrl() + "login";
 
     public RegisterPage doRegister() {
@@ -39,6 +60,12 @@ public class LoginPage extends BasePage<LoginPage> {
         return new MainPage();
     }
 
+    public void login(String username, String password,SelenideDriver driver) {
+        usernameInput.setValue(username);
+        passwordInput.setValue(password);
+        submitButton.click();
+    }
+
     public LoginPage checkError(String error) {
         errorContainer.shouldHave(text(error));
         return this;
@@ -48,6 +75,13 @@ public class LoginPage extends BasePage<LoginPage> {
     @Nonnull
     public LoginPage open() {
         Selenide.open(LOGIN_PAGE_URL);
+        return this;
+    }
+
+    @Step("Открытие страницы авторизации")
+    @Nonnull
+    public LoginPage open(@NotNull SelenideDriver driver) {
+        driver.open(LOGIN_PAGE_URL);
         return this;
     }
 }
