@@ -60,4 +60,19 @@ public class UserExtension implements BeforeEachCallback,
         UserJson.class
     );
   }
+    public static UserJson createdUser() {
+        final ExtensionContext context = TestMethodContextExtension.context();
+        return context.getStore(NAMESPACE).get(
+                context.getUniqueId(),
+                UserJson.class
+        );
+    }
+
+    public static void setUser(UserJson testUser) {
+        final ExtensionContext context = TestMethodContextExtension.context();
+        context.getStore(NAMESPACE).put(
+                context.getUniqueId(),
+                testUser
+        );
+    }
 }

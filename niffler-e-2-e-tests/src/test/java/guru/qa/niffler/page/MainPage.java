@@ -17,7 +17,7 @@ import static com.codeborne.selenide.Selenide.$$;
 @Getter
 public class MainPage extends BasePage<MainPage> {
 
-
+    public final static String MAIN_PAGE_URL = CONFIG.frontUrl() + "login";
     private final ElementsCollection tableRows = $("#spendings tbody").$$("tr");
     private final SelenideElement historyOfSpending = $("#spendings");
     private final SelenideElement statistic = $("#stat");
@@ -83,6 +83,15 @@ public class MainPage extends BasePage<MainPage> {
     public StatComponent getStatComponent() {
         statComponent.getSelf().scrollIntoView(true);
         return statComponent;
+    }
+
+    @Step("Проверка, что страница загружена")
+    @Nonnull
+    public MainPage checkThatPageLoaded() {
+        header.getSelf().should(visible).shouldHave(text("Niffler"));
+        statComponent.getSelf().should(visible).shouldHave(text("Statistics"));
+        spendingTable.getSelf().should(visible).shouldHave(text("History of Spendings"));
+        return this;
     }
 
 }

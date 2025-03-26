@@ -139,4 +139,48 @@ public class UsersApiClient implements UsersClient{
         assertEquals(HttpStatus.SC_SUCCESS, response.code());
         return response.body() != null ? response.body() : Collections.emptyList();
     }
+    @Step("Get friends of a user '{username}'")
+    @Nonnull
+    public List<UserJson> getFriends(String username) {
+        final Response<List<UserJson>> response;
+
+        try {
+            response = userdataApi.friends(
+                    username,
+                    null
+            ).execute();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        assertEquals(200, response.code());
+
+        if (response.isSuccessful() && response.body() != null) {
+            return response.body();
+        } else {
+            return Collections.emptyList();
+        }
+    }
+    @Step("Get 'All people' list of a user '{username}'")
+    @Nonnull
+    public List<UserJson> getAllPeople(String username) {
+        final Response<List<UserJson>> response;
+
+        try {
+            response = userdataApi.allUsers(
+                    username,
+                    null
+            ).execute();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        assertEquals(200, response.code());
+
+        if (response.isSuccessful() && response.body() != null) {
+            return response.body();
+        } else {
+            return Collections.emptyList();
+        }
+    }
 }

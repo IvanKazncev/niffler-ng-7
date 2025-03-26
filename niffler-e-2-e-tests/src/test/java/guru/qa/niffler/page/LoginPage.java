@@ -11,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nonnull;
 
 import static com.codeborne.selenide.Condition.text;
+import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.$;
 
 @Getter
@@ -82,6 +83,14 @@ public class LoginPage extends BasePage<LoginPage> {
     @Nonnull
     public LoginPage open(@NotNull SelenideDriver driver) {
         driver.open(LOGIN_PAGE_URL);
+        return this;
+    }
+
+    @Step("Проверка, что страница загружена")
+    @Nonnull
+    public LoginPage checkThatPageLoaded() {
+        usernameInput.should(visible);
+        passwordInput.should(visible);
         return this;
     }
 }

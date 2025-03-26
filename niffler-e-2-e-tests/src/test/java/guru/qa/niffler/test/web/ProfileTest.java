@@ -2,6 +2,7 @@ package guru.qa.niffler.test.web;
 
 import com.codeborne.selenide.Selenide;
 import guru.qa.niffler.config.Config;
+import guru.qa.niffler.jupiter.annotation.ApiLogin;
 import guru.qa.niffler.jupiter.annotation.Category;
 import guru.qa.niffler.jupiter.annotation.ScreenShotTest;
 import guru.qa.niffler.jupiter.annotation.User;
@@ -31,14 +32,11 @@ public class ProfileTest {
           username = "ivan",
           categories = @Category( archived = true)
   )
+  @ApiLogin
   @DisplayName("Архивная категория должна присутствовать и отображаться в списке категорий")
   @Test
   void archivedCategoryShouldPresentInCategoriesList(@NotNull CategoryJson[] category) {
-    Selenide.open(CFG.frontUrl(), LoginPage.class)
-            .login(category[0].username(), "123")
-            .navigateMenuComponent
-            .clickAccountMenuButton()
-            .clickProfileButton()
+    Selenide.open(ProfilePage.PROFILE_PAGE_URL, ProfilePage.class)
             .clickArchivedCheckbox()
             .checkCategoryInCategoryList(category[0].name());
   }
@@ -47,24 +45,18 @@ public class ProfileTest {
           username = "ivan",
           categories = @Category( archived = false)
   )
+  @ApiLogin
   @DisplayName("Активная категория должна присутствовать и отображаться в списке категорий")
   @Test
   void activeCategoryShouldPresentInCategoriesList(@NotNull CategoryJson category) {
-    Selenide.open(CFG.frontUrl(), LoginPage.class)
-            .login("ivan", "123")
-            .navigateMenuComponent
-            .clickAccountMenuButton()
-            .clickProfileButton()
+    Selenide.open(ProfilePage.PROFILE_PAGE_URL, ProfilePage.class)
             .checkCategoryInCategoryList(category.name());
   }
   @User
+  @ApiLogin
   @Test
   void updateAllFieldsProfile(@NotNull UserJson user) {
-    new LoginPage()
-            .open()
-            .login(user.username(), user.testData().password())
-            .getHeader()
-            .toProfilePage()
+    Selenide.open(ProfilePage.PROFILE_PAGE_URL, ProfilePage.class)
             .uploadImage("resources/img/bait.png")
             .setName(RandomDataUtils.randomName())
             .setNewCategory(RandomDataUtils.randomCategoryName())
@@ -73,14 +65,11 @@ public class ProfileTest {
   }
 
   @User
+  @ApiLogin
   @DisplayName("Проверка загрузки аватарки")
   @ScreenShotTest(value = "image/expected-avatar.png")
   void checkCorrectUploadAvatar(@NotNull UserJson user, BufferedImage expected) throws IOException {
-    new LoginPage()
-            .open()
-            .login(user.username(), user.testData().password())
-            .getHeader()
-            .toProfilePage()
+    Selenide.open(ProfilePage.PROFILE_PAGE_URL, ProfilePage.class)
             .uploadImage("resources/img/bait.png")
             .saveChanges();
 

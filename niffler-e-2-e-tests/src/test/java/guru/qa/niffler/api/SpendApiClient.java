@@ -20,7 +20,7 @@ public class SpendApiClient extends RestClient {
 
     private final SpendApi spendApi;
 
-    public SpendApiClient(String baseUrl) {
+    public SpendApiClient() {
         super(CONFIG.spendUrl());
         this.spendApi = create(SpendApi.class);
     }
@@ -67,13 +67,10 @@ public class SpendApiClient extends RestClient {
         return response.body();
     }
 
-    public List<SpendJson> allSpends(String username,
-                                     CurrencyValues currency,
-                                     String from,
-                                     String to) {
+    public List<SpendJson> allSpends(String username) {
         final Response<List<SpendJson>> response;
         try {
-            response = spendApi.allSpends(username, currency, from, to)
+            response = spendApi.allSpends(username, null, null, null)
                     .execute();
         } catch (IOException e) {
             throw new AssertionError(e);
