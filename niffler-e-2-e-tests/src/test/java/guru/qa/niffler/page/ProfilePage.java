@@ -31,7 +31,7 @@ public class ProfilePage extends BasePage<MainPage> {
     private final ElementsCollection bubblesArchived = $$(".MuiChip-filled.MuiChip-colorDefault");
     private final SelenideElement showArchivedCheckbox = $("input[type='checkbox']");
 
-
+    public static final String PROFILE_PAGE_URL = CONFIG.frontUrl() + "profile";
     NavigateMenuComponent navigateMenuComponent = new NavigateMenuComponent();
 
     private final Header header = new Header();
@@ -90,6 +90,13 @@ public class ProfilePage extends BasePage<MainPage> {
     @Step("Сохранение изменений на странице пользователя")
     public ProfilePage saveChanges() {
         saveChangesButton.click();
+        return this;
+    }
+
+    @Step("Проверка, что страница загружена")
+    @Nonnull
+    public ProfilePage checkThatPageLoaded() {
+        userName.should(visible);
         return this;
     }
 }

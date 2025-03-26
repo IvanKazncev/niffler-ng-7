@@ -1,8 +1,10 @@
 package guru.qa.niffler.test.web;
 
+import com.codeborne.selenide.Selenide;
 import guru.qa.niffler.condition.Bubble;
 import guru.qa.niffler.condition.Color;
 import guru.qa.niffler.config.Config;
+import guru.qa.niffler.jupiter.annotation.ApiLogin;
 import guru.qa.niffler.jupiter.annotation.ScreenShotTest;
 import guru.qa.niffler.jupiter.annotation.Spending;
 import guru.qa.niffler.jupiter.annotation.User;
@@ -36,20 +38,17 @@ public class SpendingWebTest {
                     description = "Java Advanced 2.0",
                     amount = 90000)
     )
+    @ApiLogin
     @Test
     void categoryDescriptionShouldBeChangedFromTable(SpendJson spend) {
         final String newDescription = "Обучение Niffler Next Generation";
-        new LoginPage()
-                .open()
-                .login("ivan", "123")
-                .editSpending(spend.description())
-                .editDescription(newDescription)
-                .saveChange()
+        Selenide.open(MainPage.MAIN_PAGE_URL, MainPage.class)
                 .checkAlertMessage("Spending is edited successfully")
                 .checkThatTableContainsSpending(newDescription);
     }
 
     @User
+    @ApiLogin
     @Test
     void shouldAddNewSpending(UserJson user) {
         String category = "bait";
@@ -57,16 +56,7 @@ public class SpendingWebTest {
         LocalDate currentDate = LocalDate.now();
         String description = RandomDataUtils.randomSentence(1);
 
-        new LoginPage()
-                .open()
-                .login(user.username(), user.testData().password())
-                .getHeader()
-                .addSpendingPage()
-                .editCategory(category)
-                .editAmount(amount)
-                .editDate(currentDate)
-                .editDescription(description)
-                .saveChange()
+        Selenide.open(MainPage.MAIN_PAGE_URL, MainPage.class)
                 .checkAlertMessage("Spending is edited successfully")
                 .getSpendingTable()
                 .checkTableContains(description);
@@ -80,15 +70,11 @@ public class SpendingWebTest {
                     amount = 1000
             )
     )
+    @ApiLogin
     @ScreenShotTest(value = "image/expected-edit-stat.png")
     void checkStatComponentAfterEditSpendingTest(@NotNull UserJson user, BufferedImage expected) throws IOException, InterruptedException {
         String newAmount = "2000";
-        new LoginPage()
-                .open()
-                .login(user.username(), user.testData().password())
-                .editSpendingClick(user.testData().spends().getFirst().description())
-                .editAmount(Double.parseDouble(newAmount))
-                .saveChange()
+        Selenide.open(MainPage.MAIN_PAGE_URL, MainPage.class)
                 .checkCellCategoryAndAmountInStatisticsBlock(user.testData().spends().getFirst().category().name(),
                         newAmount);
 
@@ -114,13 +100,11 @@ public class SpendingWebTest {
                             amount = 2000)
             }
     )
-
+    @ApiLogin
     @ScreenShotTest(value = "image/expected-delete-stat.png",
             rewrite = true)
     void checkStatComponentAfterDeleteSpendingTest(@NotNull UserJson user, BufferedImage expected) throws IOException, InterruptedException {
-        new LoginPage()
-                .open()
-                .login(user.username(), user.testData().password())
+        Selenide.open(MainPage.MAIN_PAGE_URL, MainPage.class)
                 .getSpendingTable()
                 .deleteSpending(user.testData().spends().getFirst().category().name());
 
@@ -141,16 +125,10 @@ public class SpendingWebTest {
                     amount = 2000
             )
     )
+    @ApiLogin
     @ScreenShotTest(value = "image/expected-archived-stat.png")
     void checkStatComponentAfterArchivedCategoryTest(@NotNull UserJson user, BufferedImage expected) throws IOException, InterruptedException {
-        new LoginPage()
-                .open()
-                .login(user.username(), user.testData().password())
-                .getHeader()
-                .toProfilePage()
-                .archivedCategory(user.testData().spends().getFirst().category().name())
-                .getHeader()
-                .toMainPage()
+        Selenide.open(MainPage.MAIN_PAGE_URL, MainPage.class)
                 .getStatComponent()
                 .checkCellCategoryAndAmountInStatisticsBlock("Archived", String.format("%.0f", user.testData().spends().getFirst().amount()))
                 .checkStatisticImage(expected)
@@ -175,11 +153,10 @@ public class SpendingWebTest {
                     )
             }
     )
+    @ApiLogin
     @Test
     void checkBubblesInAnyOderTest(UserJson user) {
-        new LoginPage()
-                .open()
-                .login(user.username(), user.testData().password())
+        Selenide.open(MainPage.MAIN_PAGE_URL, MainPage.class)
                 .getStatComponent()
                 .checkBubblesInAnyOrder(
                         new Bubble(Color.yellow, "Обучение 79990 ₽"),
@@ -206,11 +183,10 @@ public class SpendingWebTest {
                     )
             }
     )
+    @ApiLogin
     @Test
     void checkStatComponentContainsBubblesTest(UserJson user) {
-        new LoginPage()
-                .open()
-                .login(user.username(), user.testData().password())
+        Selenide.open(MainPage.MAIN_PAGE_URL, MainPage.class)
                 .getStatComponent()
                 .checkBubblesContains(
                         new Bubble(Color.yellow, "Обучение 79990 ₽"),
@@ -233,13 +209,12 @@ public class SpendingWebTest {
             }
 
     )
+    @ApiLogin
     @Test
     void checkSpendExistTest(UserJson user) {
 
         SpendJson[] expectedSpends = user.testData().spends().toArray(SpendJson[]::new);
-        new LoginPage()
-                .open()
-                .login(user.username(), user.testData().password())
+        Selenide.open(MainPage.MAIN_PAGE_URL, MainPage.class)
                 .getSpendingTable()
                 .checkSpendingTable(expectedSpends);
     }

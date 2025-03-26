@@ -1,8 +1,12 @@
 package guru.qa.niffler.page;
 
 import com.codeborne.selenide.SelenideElement;
+import io.qameta.allure.Step;
+
+import javax.annotation.Nonnull;
 
 import static com.codeborne.selenide.Condition.text;
+import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.$;
 
 public class RegisterPage extends BasePage<MainPage> {
@@ -31,4 +35,12 @@ public class RegisterPage extends BasePage<MainPage> {
     submitButton.click();
   }
 
+  @Step("Проверка, что страница загружена")
+  @Nonnull
+  public RegisterPage checkThatPageLoaded() {
+    usernameInput.should(visible);
+    passwordInput.should(visible);
+    passwordSubmitInput.should(visible);
+    return this;
+  }
 }
